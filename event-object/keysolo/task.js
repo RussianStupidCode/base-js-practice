@@ -8,6 +8,17 @@ class Game {
     this.reset();
 
     this.registerEvents();
+
+    // было лень прописывать все варианты, но суть я думаю показал
+    this.dictionary = {
+      'Й': "Q",
+      "Ц": "W",
+      "У": "E",
+      "К": "R",
+      "Е": "T",
+      "Н": "Y",
+      "Г": "U"
+    }
   }
 
   reset() {
@@ -16,14 +27,29 @@ class Game {
     this.lossElement.textContent = 0;
   }
 
+  convertSymbol(sym) {
+    sym = sym.toUpperCase();
+    let result = this.dictionary[sym];
+    if(result === undefined) {
+      return sym;
+    }
+    return result;
+  }
+
   registerEvents() {
-    /*
-      TODO:
-      Написать обработчик события, который откликается
-      на каждый введённый символ.
-      В случае правильного ввода слова вызываем this.success()
-      При неправильном вводе символа - this.fail();
-     */
+    window.addEventListener('keydown', (event) => {
+      if(event.code.indexOf("Key") == -1) {
+        return;
+      }
+
+      let sym = this.convertSymbol(this.currentSymbol.textContent);
+
+      if (event.code === `Key${sym}`) {
+        this.success();
+      } else {
+        this.fail();
+      }
+    });
   }
 
   success() {
