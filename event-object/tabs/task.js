@@ -1,5 +1,6 @@
-const tabs = document.getElementsByClassName("tab");
-const tabsContent = document.getElementsByClassName("tab__content");
+const tabsList = document.querySelectorAll(".tabs");
+
+
 
 
 function getActiveTabIndex(tabs) {
@@ -30,6 +31,11 @@ function toggleTab(oldIndex, newIndex, tabs, tabsContent) {
 
 
 function clickTabHandler(event) {
+    const parent = this.closest(".tabs");
+
+    const tabs = parent.getElementsByClassName("tab");
+    const tabsContent = parent.getElementsByClassName("tab__content");
+
     let index = getActiveTabIndex(tabs);
     let newIndnex = getIndexTab(event.target, tabs);
     toggleTab(index, newIndnex, tabs, tabsContent);
@@ -37,8 +43,12 @@ function clickTabHandler(event) {
 
 
 function main() {
-    for(let tab of tabs) {
-        tab.addEventListener("click", clickTabHandler);
+    for(let tabField of tabsList) {
+        const tabs = tabField.getElementsByClassName("tab");
+
+        for(let tab of tabs) {
+            tab.addEventListener("click", clickTabHandler);
+        }
     }
 }
 
