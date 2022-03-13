@@ -40,10 +40,6 @@ function getRandomBotMessage(botMessageList) {
     return botMessageList[Math.floor(Math.random() * botMessageList.length)];
 }
 
-function autoScroll(element) {
-    element.scrollLeft = Infinity;
-}
-
 chat.addEventListener("click", event => {
     chat.classList.add("chat-widget_active");
 });
