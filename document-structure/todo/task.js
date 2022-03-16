@@ -1,73 +1,75 @@
-const storage = window.localStorage;
+const tasks = document.querySelector(".tasks");
+const addButton = tasks.querySelector(".tasks__add");
+const taskInput = tasks.querySelector(".tasks__input");
+const taskList = tasks.querySelector(".tasks__list");
 
-function createTask(taskText, taskId) {
+const storage = window.localStorage;
+let tasksStates = loadStorage(storage);
+let currentTaskId = Object.keys(tasksStates).length > 0 ? +Object.keys(tasksStates).sort((a,b) => b[0] - a[0])[0] + 1: 0; 
+
+function saveStorage(storage, tasksStates) {
+    storage["tasks"] = JSON.stringify(tasksStates);
+}
+
+function loadStorage(storage) {
+    if(!storage["tasks"]) {
+        return {};
+    }
+
+    const result = JSON.parse(storage["tasks"]);
+    const states = Object.entries(result).sort((a,b) => a[0] - b[0]);
+
+    for(const [id, text] of states) {
+        addTask(taskList, result, text, id);
+    }
+
+    return result;
+}
+
+function createTask(taskText, taskId, tasksStates) {
     const task = document.createElement("div");
     task.classList.add("task");
 
     task.insertAdjacentHTML("afterBegin", `<div class="task__title">${taskText}</div><a href="#" class="task__remove">&times;</a>`)
 
     const removeBtn = task.querySelector(".task__remove");
+    tasksStates[taskId] = taskText;
+
     removeBtn.addEventListener("click", event => {
         event.preventDefault();
         task.remove();
 
-        storage.removeItem(taskId.toString());
-    })
+        delete tasksStates[taskId];
+        saveStorage(storage, tasksStates);
+    });
 
     return task;
 }
 
 
-function addTask(taskList, taskText, storage, taskId) {
-    if(storage.getItem(taskId)) {
-        taskList.insertAdjacentElement("beforeEnd", createTask(taskText, taskId));
+function addTask(taskList, tasksStates, taskText, taskId) {
+    if(tasksStates[taskId]) {
+        taskList.insertAdjacentElement("beforeEnd", createTask(taskText, taskId, tasksStates));
         return;
     }
-
-   
-    let currentTaskId = storage.getItem("startId");
-    taskList.insertAdjacentElement("beforeEnd", createTask(taskText, currentTaskId));
-
-    storage.setItem(currentTaskId.toString(), taskText);
-    currentTaskId ++;
-    storage.setItem("startId", currentTaskId);
     
+    taskList.insertAdjacentElement("beforeEnd", createTask(taskText, currentTaskId, tasksStates));
+    tasksStates[currentTaskId] = taskText;
+    currentTaskId++;
 }
 
-const tasks = document.querySelector(".tasks");
-const addButton = tasks.querySelector(".tasks__add");
-const taskInput = tasks.querySelector(".tasks__input");
-const taskList = tasks.querySelector(".tasks__list");
-let currentTaskId = storage.getItem("startId")? storage.getItem("startId"): 0; 
-storage.setItem("startId", currentTaskId);
 
 addButton.addEventListener("click", event => {
     event.preventDefault();
 
-    const taskText = taskInput.value;
+    const taskText = taskInput.value.trim();
     if(taskText === "") {
         return;
     }
  
     taskInput.value = "";
 
-    addTask(taskList, taskText, storage);    
-    
+    addTask(taskList, tasksStates, taskText);    
+    saveStorage(storage, tasksStates);
 });
 
-function clearAllTask() {
-    for(const btn of document.querySelectorAll(".task__remove")) {
-        btn.click();
-    }
-}
-
-function createSaveTask(taskList, storage) {
-    // т.к. ключи строки, то надо отсортировать как числа, чтобы сохранить порядок
-    const taskIdList = Object.keys(localStorage).filter(el => !isNaN(+el)).sort((a, b) => (+a) - (+b))
-    for(const key of taskIdList) {
-        addTask(taskList, storage.getItem(key), storage, key);
-    }
-}
-
-clearAllTask();
-createSaveTask(taskList, storage);
