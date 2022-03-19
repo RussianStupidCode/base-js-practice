@@ -8,3 +8,13 @@ textarea {
   border: 1px solid #e2e2e2;
   box-sizing: border-box;
 }
+
+
+.clear {
+  width: 100%;
+  background-color: black;
+  color: orange;
+  border-radius: 5%;
+  font-size: 24px;
+  font-weight: bold;
+}
