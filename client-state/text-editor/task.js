@@ -2,7 +2,7 @@ const storage = window.localStorage;
 const cardHTML = document.querySelector(".card");
 
 class Card {
-    constructor(cardHTML, storage) {
+    constructor(cardHTML) {
         this._HTML = cardHTML;
         this._storage = storage;
         this._textAreaHTML = cardHTML.querySelector("#editor")
@@ -26,13 +26,13 @@ class Card {
 
     addEvents() {
         this._textAreaHTML.addEventListener("input", event => {
-            this.saveState(this._storage);
+            this.saveState(storage);
         });
 
         const clearButton = this._HTML.querySelector(".clear");
         clearButton.addEventListener("click", event=> {
             this._textAreaHTML.value = "";
-            this.saveState(this._storage);
+            storage.removeItem("editorText");
         });
     }
 };

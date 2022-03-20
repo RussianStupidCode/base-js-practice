@@ -1,3 +1,5 @@
+const storage = window.localStorage; 
+
 function responseURL(method, url, formData) {
     return new Promise((resolve, reject) => {
         const requests = new XMLHttpRequest();
@@ -26,7 +28,7 @@ class UserWelcomeBlock {
 };
 
 class AuthForm {
-    constructor(elementHTML, storage) {
+    constructor(elementHTML) {
         this._HTML = elementHTML;
         this._formHTML = elementHTML.querySelector("#signin__form");
         this._loginHTML = elementHTML.querySelector('input[name="login"]');
@@ -53,11 +55,6 @@ class AuthForm {
         
     }
 
-    clearInput() {
-        this._loginHTML.value = "";
-        this._passwordHTML.value = "";
-    }
-
     showWelcomeBlock() {
         const welcomeBlock = new UserWelcomeBlock(this._HTML.closest(".card").querySelector(".welcome"), this._userId);
         welcomeBlock.show();
@@ -69,7 +66,7 @@ class AuthForm {
             event.preventDefault();
             
             if(this.login === "" || this.password === "") {
-                this.clearInput();
+                this._formHTML.reset();
                 return;
             }
 
@@ -77,7 +74,7 @@ class AuthForm {
             const response = responseURL("POST", this._formHTML.getAttribute("action"), formData);
 
             response.then(data => {
-                this.clearInput();
+                this._formHTML.reset();
                 if(!data["success"]) {
                     alert("Неверный логи/пароль");
                     return;
@@ -107,4 +104,4 @@ class AuthForm {
 
 
 const formHTML = document.querySelector(".signin");
-const form = new AuthForm(formHTML, window.localStorage);
+const form = new AuthForm(formHTML);

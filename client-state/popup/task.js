@@ -25,9 +25,8 @@ class CookieWrapper {
 }
 
 class Modal {
-    constructor(elementHTML, storage) {
+    constructor(elementHTML) {
         this._HTML = elementHTML;
-        this._storage = storage;
         this._isClose = false;
 
         this.loadState(storage);
